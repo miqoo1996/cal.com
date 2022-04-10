@@ -39,10 +39,14 @@ export async function getServerSideProps(context: NextPageContext) {
   return { redirect: { permanent: false, destination: "/event-types" } };
 }
 
-const reducer = (state: {selectedAgencies: []}, action) => {
+type iniState = {selectedAgencies: number[]};
+
+const initialState : iniState = {selectedAgencies: []};
+
+const reducer = (state: iniState, action: {type: string, payload: any}): {selectedAgencies: number[]} => {
   console.log(state, action);
 
-  let selectedAgencies = state.selectedAgencies || [];
+  let selectedAgencies: number[]  = state.selectedAgencies || [];
 
   if (action.type === 'remove') {
     selectedAgencies = selectedAgencies.filter(id => id !== action.payload.id);
@@ -57,8 +61,8 @@ const reducer = (state: {selectedAgencies: []}, action) => {
   };
 };
 
-export default function HomePage({items}: {items: object}) {
-  const [context, dispatch] = useReducer(reducer, {})
+export default function HomePage({items}: {items: any}) {
+  const [context, dispatch] = useReducer(reducer, initialState)
   return (
     <div className="main-container">
       <div className="page-details">
@@ -67,7 +71,7 @@ export default function HomePage({items}: {items: object}) {
       </div>
 
       <section className="agencies top-50">
-        {items.map(item => {
+        {items.map((item: any) => {
           return (
             <Agency
               key={item.id}
