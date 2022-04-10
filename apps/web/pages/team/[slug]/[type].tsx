@@ -127,6 +127,7 @@ export const getServerSideProps = async (context: GetServerSidePropsContext) => 
       eventType: eventTypeObject,
       workingHours,
       previousPage: context.req.headers.referer ?? null,
+      items: []
     },
   };
 };

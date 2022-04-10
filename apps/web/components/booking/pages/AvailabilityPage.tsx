@@ -80,20 +80,20 @@ const AvailabilityPage = ({ items, profile, plan, eventType, workingHours, previ
 
   const queryParams = router.query;
 
-  const selectedAgencies = items.filter(data => {
-    return queryParams?.items.indexOf(data.id.toString()) !== -1;
+  const selectedAgencies = items.filter((data: any) => {
+    const items = queryParams?.items || [];
+    return items.indexOf(data.id.toString()) !== -1;
   });
 
   const activeUserId = queryParams?.user_id || queryParams?.items?.[0];
-  const activeUser = selectedAgencies.find(data => data.id == activeUserId);
-  console.log(activeUser);
+  const activeUser = selectedAgencies.find((data: any) => data.id == activeUserId);
 
   const [isTimeOptionsOpen, setIsTimeOptionsOpen] = useState(false);
   const [timeFormat, setTimeFormat] = useState(detectBrowserTimeFormat);
 
   const telemetry = useTelemetry();
 
-  const onUserChangeHandler = (e) => {
+  const onUserChangeHandler = (e: any) => {
     router.replace({
       pathname: router.pathname,
       query: {
@@ -227,7 +227,7 @@ const AvailabilityPage = ({ items, profile, plan, eventType, workingHours, previ
                   {/*<h2 className="mt-3 font-medium text-gray-500 dark:text-gray-300">{profile.name}</h2>*/}
 
                   <section style={{marginBottom: '30px'}}>
-                    {selectedAgencies.map((profile) => {
+                    {selectedAgencies.map((profile: any) => {
 
                       const user = activeUserId == profile.id ? (
                         <div>
@@ -286,7 +286,7 @@ const AvailabilityPage = ({ items, profile, plan, eventType, workingHours, previ
                     <UserIcon className="mr-1 -mt-1 inline-block h-4 w-4" />
                     User Selected
                     <select onChange={e => onUserChangeHandler(e)}>
-                      {selectedAgencies.map(user => {
+                      {selectedAgencies.map((user: any) => {
                         return (
                           <option selected={user.id == activeUserId} key={user.id} value={user.id}>
                             {user.name}

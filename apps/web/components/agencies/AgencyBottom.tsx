@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function AgencyBottom({context}) {
+export default function AgencyBottom({context}: {context: { selectedAgencies: number[] }}) {
   return (
     <>
       {context?.selectedAgencies?.length > 0 ? (

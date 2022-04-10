@@ -11,7 +11,7 @@ interface AgencyProps {
 export default function Agency({id, name, description, image, dispatch} : AgencyProps) {
   const [selected, setSelected] = useState(false);
 
-  const onAgencyClickHandle = (id) => {
+  const onAgencyClickHandle = (id: number) => {
     setSelected(!selected);
 
     if (!selected) {
