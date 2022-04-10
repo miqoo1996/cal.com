@@ -20,6 +20,7 @@ import { Maybe } from "@trpc/server";
 import { ContractsProvider } from "../contexts/contractsContext";
 import "../styles/fonts.css";
 import "../styles/globals.css";
+import "../styles/style.css";
 
 function MyApp(props: AppProps) {
   const { Component, pageProps, err } = props;

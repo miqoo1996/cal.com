@@ -5,6 +5,7 @@ import {
   ChevronUpIcon,
   ClockIcon,
   CreditCardIcon,
+  UserIcon,
   GlobeIcon,
 } from "@heroicons/react/solid";
 import * as Collapsible from "@radix-ui/react-collapsible";
@@ -42,7 +43,7 @@ dayjs.extend(customParseFormat);
 
 type Props = AvailabilityTeamPageProps | AvailabilityPageProps;
 
-const AvailabilityPage = ({ profile, plan, eventType, workingHours, previousPage }: Props) => {
+const AvailabilityPage = ({ items, profile, plan, eventType, workingHours, previousPage }: Props) => {
   const router = useRouter();
   const { rescheduleUid } = router.query;
   const { isReady, Theme } = useTheme(profile.theme);
@@ -77,10 +78,30 @@ const AvailabilityPage = ({ profile, plan, eventType, workingHours, previousPage
     return null;
   }, [router.query.date]);
 
+  const queryParams = router.query;
+
+  const selectedAgencies = items.filter(data => {
+    return queryParams?.items.indexOf(data.id.toString()) !== -1;
+  });
+
+  const activeUserId = queryParams?.user_id || queryParams?.items?.[0];
+  const activeUser = selectedAgencies.find(data => data.id == activeUserId);
+  console.log(activeUser);
+
   const [isTimeOptionsOpen, setIsTimeOptionsOpen] = useState(false);
   const [timeFormat, setTimeFormat] = useState(detectBrowserTimeFormat);
 
   const telemetry = useTelemetry();
+
+  const onUserChangeHandler = (e) => {
+    router.replace({
+      pathname: router.pathname,
+      query: {
+        ...queryParams,
+        user_id: e.currentTarget.value
+      }
+    });
+  }
 
   useEffect(() => {
     handleToggle24hClock(localStorage.getItem("timeOption.is24hClock") === "true");
@@ -203,7 +224,42 @@ const AvailabilityPage = ({ profile, plan, eventType, workingHours, previousPage
                     size={10}
                     truncateAfter={3}
                   />
-                  <h2 className="mt-3 font-medium text-gray-500 dark:text-gray-300">{profile.name}</h2>
+                  {/*<h2 className="mt-3 font-medium text-gray-500 dark:text-gray-300">{profile.name}</h2>*/}
+
+                  <section style={{marginBottom: '30px'}}>
+                    {selectedAgencies.map((profile) => {
+
+                      const user = activeUserId == profile.id ? (
+                        <div>
+                          <h2 className="mt-3 font-medium text-gray-500 dark:text-gray-300">
+                            <strong>{ profile.name }</strong>
+                          </h2>
+
+                          <div className="selected-book-user">
+                            Selected:
+                            <svg className="w-6 h-6 dark:text-white selected-item" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                 xmlns="http://www.w3.org/2000/svg">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                          </div>
+                        </div>
+                      ) : (
+                        <div><h2 className="mt-3 font-medium text-gray-500 dark:text-gray-300">{ profile.name }</h2></div>
+                      );
+
+                      return (
+                        <div style={{marginBottom: '30px'}}>
+                          <div className="agency-image">
+                            <img src={profile.image} />
+                          </div>
+
+                          {user}
+                        </div>
+                      );
+                    })}
+                  </section>
+
                   <h1 className="font-cal mb-4 text-3xl font-semibold text-gray-800 dark:text-white">
                     {eventType.title}
                   </h1>
@@ -225,6 +281,20 @@ const AvailabilityPage = ({ profile, plan, eventType, workingHours, previousPage
                   )}
 
                   <TimezoneDropdown />
+
+                  <p className="mb-1 -ml-2 px-2 py-1 text-gray-500">
+                    <UserIcon className="mr-1 -mt-1 inline-block h-4 w-4" />
+                    User Selected
+                    <select onChange={e => onUserChangeHandler(e)}>
+                      {selectedAgencies.map(user => {
+                        return (
+                          <option selected={user.id == activeUserId} key={user.id} value={user.id}>
+                            {user.name}
+                          </option>
+                        )
+                      })}
+                    </select>
+                  </p>
 
                   <p className="mt-3 mb-8 text-gray-600 dark:text-gray-200">{eventType.description}</p>
                   {previousPage === `${BASE_URL}/${profile.slug}` && (
